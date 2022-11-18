@@ -7,7 +7,7 @@
   "sourceMap": "199:3182:2:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;199:3182:2;;;;;;;",
   "deployedSourceMap": "199:3182:2:-;;;;;",
   "source": "pragma solidity ^0.5.7;\npragma experimental ABIEncoderV2;\n\nimport \"@openzeppelin/contracts/math/SafeMath.sol\";\nimport \"@openzeppelin/contracts/token/ERC20/IERC20.sol\";\n\nimport \"./ISoloMargin.sol\";\n\n\ncontract DydxFlashloanBase {\n    using SafeMath for uint256;\n\n    // -- Internal Helper functions -- //\n\n    function _getMarketIdFromTokenAddress(address _solo, address token)\n        internal\n        view\n        returns (uint256)\n    {\n        ISoloMargin solo = ISoloMargin(_solo);\n\n        uint256 numMarkets = solo.getNumMarkets();\n\n        address curToken;\n        for (uint256 i = 0; i < numMarkets; i++) {\n            curToken = solo.getMarketTokenAddress(i);\n\n            if (curToken == token) {\n                return i;\n            }\n        }\n\n        revert(\"No marketId found for provided token\");\n    }\n\n    function _getRepaymentAmountInternal(uint256 amount)\n        internal\n        view\n        returns (uint256)\n    {\n        // Needs to be overcollateralize\n        // Needs to provide +2 wei to be safe\n        return amount.add(2);\n    }\n\n    function _getAccountInfo() internal view returns (Account.Info memory) {\n        return Account.Info({owner: address(this), number: 1});\n    }\n\n    function _getWithdrawAction(uint marketId, uint256 amount)\n        internal\n        view\n        returns (Actions.ActionArgs memory)\n    {\n        return\n            Actions.ActionArgs({\n                actionType: Actions.ActionType.Withdraw,\n                accountId: 0,\n                amount: Types.AssetAmount({\n                    sign: false,\n                    denomination: Types.AssetDenomination.Wei,\n                    ref: Types.AssetReference.Delta,\n                    value: amount\n                }),\n                primaryMarketId: marketId,\n                secondaryMarketId: 0,\n                otherAddress: address(this),\n                otherAccountId: 0,\n                data: \"\"\n            });\n    }\n\n    function _getCallAction(bytes memory data)\n        internal\n        view\n        returns (Actions.ActionArgs memory)\n    {\n        return\n            Actions.ActionArgs({\n                actionType: Actions.ActionType.Call,\n                accountId: 0,\n                amount: Types.AssetAmount({\n                    sign: false,\n                    denomination: Types.AssetDenomination.Wei,\n                    ref: Types.AssetReference.Delta,\n                    value: 0\n                }),\n                primaryMarketId: 0,\n                secondaryMarketId: 0,\n                otherAddress: address(this),\n                otherAccountId: 0,\n                data: data\n            });\n    }\n\n    function _getDepositAction(uint marketId, uint256 amount)\n        internal\n        view\n        returns (Actions.ActionArgs memory)\n    {\n        return\n            Actions.ActionArgs({\n                actionType: Actions.ActionType.Deposit,\n                accountId: 0,\n                amount: Types.AssetAmount({\n                    sign: true,\n                    denomination: Types.AssetDenomination.Wei,\n                    ref: Types.AssetReference.Delta,\n                    value: amount\n                }),\n                primaryMarketId: marketId,\n                secondaryMarketId: 0,\n                otherAddress: address(this),\n                otherAccountId: 0,\n                data: \"\"\n            });\n    }\n}\n",
-  "sourcePath": "@studydefi/money-legos/dydx/contracts/DydxFlashloanBase.sol",
+  "sourcePath": "@studydefi\\money-legos\\dydx\\contracts\\DydxFlashloanBase.sol",
   "ast": {
     "absolutePath": "@studydefi/money-legos/dydx/contracts/DydxFlashloanBase.sol",
     "exportedSymbols": {
@@ -678,10 +678,10 @@
                       "name": "revert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        2121,
-                        2122
+                        2161,
+                        2162
                       ],
-                      "referencedDeclaration": 2122,
+                      "referencedDeclaration": 2162,
                       "src": "766:6:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
@@ -997,7 +997,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2150,
+                            "referencedDeclaration": 2190,
                             "src": "1185:4:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_DydxFlashloanBase_$453",
@@ -1477,7 +1477,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2150,
+                            "referencedDeclaration": 2190,
                             "src": "1856:4:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_DydxFlashloanBase_$453",
@@ -2068,7 +2068,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2150,
+                            "referencedDeclaration": 2190,
                             "src": "2558:4:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_DydxFlashloanBase_$453",
@@ -2618,7 +2618,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2150,
+                            "referencedDeclaration": 2190,
                             "src": "3291:4:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_DydxFlashloanBase_$453",
@@ -3743,10 +3743,10 @@
                                 }
                               ],
                               "overloadedDeclarations": [
-                                2121,
-                                2122
+                                2161,
+                                2162
                               ],
-                              "referencedDeclaration": 2122,
+                              "referencedDeclaration": 2162,
                               "type": "function (string memory) pure",
                               "value": "revert"
                             },
@@ -4133,7 +4133,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 2150,
+                                  "referencedDeclaration": 2190,
                                   "type": "contract DydxFlashloanBase",
                                   "value": "this"
                                 },
@@ -4720,7 +4720,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 2150,
+                                  "referencedDeclaration": 2190,
                                   "type": "contract DydxFlashloanBase",
                                   "value": "this"
                                 },
@@ -5304,7 +5304,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 2150,
+                                  "referencedDeclaration": 2190,
                                   "type": "contract DydxFlashloanBase",
                                   "value": "this"
                                 },
@@ -5905,7 +5905,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 2150,
+                                  "referencedDeclaration": 2190,
                                   "type": "contract DydxFlashloanBase",
                                   "value": "this"
                                 },
@@ -5987,8 +5987,8 @@
     "version": "0.5.17+commit.d19bba13.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.4.4",
-  "updatedAt": "2022-10-29T03:30:46.874Z",
+  "schemaVersion": "3.4.10",
+  "updatedAt": "2022-11-17T23:24:56.433Z",
   "devdoc": {
     "methods": {}
   },

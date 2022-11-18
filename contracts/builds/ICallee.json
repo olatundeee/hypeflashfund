@@ -45,7 +45,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "pragma solidity ^0.5.7;\npragma experimental ABIEncoderV2;\n\nimport { Account } from \"./ISoloMargin.sol\";\n\n\n/**\n * @title ICallee\n * @author dYdX\n *\n * Interface that Callees for Solo must implement in order to ingest data.\n */\ncontract ICallee {\n\n    // ============ Public Functions ============\n\n    /**\n     * Allows users to send this contract arbitrary data.\n     *\n     * @param  sender       The msg.sender to Solo\n     * @param  accountInfo  The account from which the data is being sent\n     * @param  data         Arbitrary data given by the sender\n     */\n    function callFunction(\n        address sender,\n        Account.Info memory accountInfo,\n        bytes memory data\n    )\n        public;\n}",
-  "sourcePath": "@studydefi/money-legos/dydx/contracts/ICallee.sol",
+  "sourcePath": "@studydefi\\money-legos\\dydx\\contracts\\ICallee.sol",
   "ast": {
     "absolutePath": "@studydefi/money-legos/dydx/contracts/ICallee.sol",
     "exportedSymbols": {
@@ -427,8 +427,8 @@
     "version": "0.5.17+commit.d19bba13.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.4.4",
-  "updatedAt": "2022-10-29T03:30:46.883Z",
+  "schemaVersion": "3.4.10",
+  "updatedAt": "2022-11-17T23:24:56.440Z",
   "devdoc": {
     "author": "dYdX * Interface that Callees for Solo must implement in order to ingest data.",
     "methods": {

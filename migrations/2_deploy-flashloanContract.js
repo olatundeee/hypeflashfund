@@ -1,5 +1,5 @@
 const Flashloan = artifacts.require("Flashloan.sol");
-const { mainnet: addresses } = require('../addresses');
+const { mainnet: addresses } = require('../addressess');
 
 module.exports = function(deployer, _network, [beneficiaryAddress, _]) {
   deployer.deploy(
@@ -8,6 +8,6 @@ module.exports = function(deployer, _network, [beneficiaryAddress, _]) {
     addresses.uniswap.router,
     addresses.tokens.weth,
     addresses.tokens.dai,
-    beneficiaryAddress      // beneficiaryAddress is the account's address that is setup for the provider of mainned, defined in the truffle-config.js file!
+    beneficiaryAddress      // beneficiaryAddress is the account's address that is setup for the provider of mainnet, defined in the truffle-config.js file!
   );
 };

@@ -3,17 +3,20 @@ const common = require('./utils.js')
 
 const abis = require('./abis');
 const { mainnet: addresses } = require('./addressess');
-const Flashloan = require("./contracts/builds/Flashloan.json");
+const flashloan = require("./contracts/builds/Flashloan.json");
 
 const { ChainId, Token, TokenAmount, Pair } = require('@uniswap/sdk');
 
 const Web3 = require('web3');
 const web3 = new Web3(
-  new Web3.providers.WebsocketProvider(process.env.INFURA_API_URL)
+  new Web3.providers.WebsocketProvider(process.env.INFURA_API_URL_WSS)
 );
 
 // Indicate web3 what private key should use when signing transactions
 const { address : admin } = web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY)
+
+let trialNo = 0;
+let oppFound = 0;
 
 // Create a contract's pointer to the KyberNetworkProxy smart contract
 const kyber = new web3.eth.Contract(
@@ -26,12 +29,13 @@ const ONE_WEI = web3.utils.toBN(web3.utils.toWei('1'));
 
 const DIRECTION = {
   KyberToUniswap: 0,        // -> Buy ETH on Kyber, Sell it on Uniswap 
-  UniswapToKyber: 1         // -> But ETH on Uniswap, Sell in on Kyber
+  UniswapToKyber: 1         // -> Buy ETH on Uniswap, Sell in on Kyber
 }
-
+addresses.tokens.dai
 // Calculate the price of ETH from Kyber
 const updateEthPrice = async () => {
-  const results = await kyber
+  try {
+    const results = await kyber
     .methods
     .getExpectedRate(
       '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', 
@@ -39,7 +43,10 @@ const updateEthPrice = async () => {
       1
     )
     .call();
-  return web3.utils.toBN('1').mul(web3.utils.toBN(results.expectedRate)).div(ONE_WEI);
+    return web3.utils.toBN('1').mul(web3.utils.toBN(results.expectedRate)).div(ONE_WEI);
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const init = async () => {
@@ -58,7 +65,8 @@ const init = async () => {
     .on('data', async block => {
       console.log(`New block received. Block # ${block.number}`);
 
-      ethPrice = await updateEthPrice();
+      let ethPrice = await updateEthPrice();
+      
       const AMOUNT_DAI_WEI = web3.utils.toBN(web3.utils.toWei(ethPrice.toString()));
       RECENT_ETH_PRICE_FROM_BINANCE = Math.round(await common.retrieveLatestEthPrice()); // Pull the latest eth price using the Binance API
 
@@ -118,8 +126,20 @@ const init = async () => {
       // Calculate the current ETH price by getting the average of the prices that were pulled from Kyber and the Binance API
       const currentEthPrice = ( ethPrice + RECENT_ETH_PRICE_FROM_BINANCE ) / 2;
 
+      trialNo += 1
+
+      /*const tx = flashloan.methods.initiateFlashloan(
+        addresses.dydx.solo, 
+        addresses.tokens.dai, 
+        AMOUNT_DAI_WEI,
+        DIRECTION.KYBER_TO_UNISWAP
+      );*/
+
       // Kyber -> Uniswap
       if(daiFromUniswap.gt(AMOUNT_DAI_WEI)) {
+        oppFound += 1
+        console.log(`Total number of trials: ${trialNo}, Kyber -> Uniswap initializing: ${oppFound}`)
+
         // Prepare/Define the transaction
         const tx = flashloan.methods.initiateFlashloan(
           addresses.dydx.solo, 
@@ -158,6 +178,8 @@ const init = async () => {
 
       // Uniswap -> Kyber
       if(daiFromKyber.gt(AMOUNT_DAI_WEI)) {
+        oppFound += 1
+        console.log(`Total number of trials: ${trialNo}, Uniswap -> Kyber initializing: ${oppFound}`)
         // Prepare/Define the transaction
         const tx = flashloan.methods.initiateFlashloan(
           addresses.dydx.solo, 
@@ -193,6 +215,14 @@ const init = async () => {
           console.log(`Transaction hash: ${receipt.transactionHash}`);
         }
       }
+
+      // No opportunities found
+
+      if(!daiFromUniswap.gt(AMOUNT_DAI_WEI) && !daiFromKyber.gt(AMOUNT_DAI_WEI)) {
+        console.log('No opportunities found at the moment')
+        console.log(`Total number of trials: ${trialNo}, Opportunities found: ${oppFound} so far`)
+      }
+
       console.log("\n\n");
     })
     .on('error', error => {
