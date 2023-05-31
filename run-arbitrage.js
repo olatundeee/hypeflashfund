@@ -3,14 +3,18 @@ const common = require('./utils.js')
 
 const abis = require('./abis');
 const { mainnet: addresses } = require('./addressess');
-const flashloan = require("./contracts/builds/Flashloan.json");
+const Flashloan = require("./contracts/builds/Flashloan.json");
 
 const { ChainId, Token, TokenAmount, Pair } = require('@uniswap/sdk');
 
 const Web3 = require('web3');
 const web3 = new Web3(
-  new Web3.providers.WebsocketProvider(process.env.INFURA_API_URL_WSS)
+  new Web3.providers.WebsocketProvider('wss://eth-mainnet.blastapi.io/ea6b4b15-64de-47e9-bd09-d072eb196b03')
 );
+
+/*const web3 = new Web3(
+  new Web3.providers.WebsocketProvider('wss://polygon-mainnet.blastapi.io/ea6b4b15-64de-47e9-bd09-d072eb196b03')
+);*/
 
 // Indicate web3 what private key should use when signing transactions
 const { address : admin } = web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY)
@@ -39,7 +43,7 @@ const updateEthPrice = async () => {
     .methods
     .getExpectedRate(
       '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', 
-      addresses.tokens.dai, 
+      addresses.tokens.dai,
       1
     )
     .call();
@@ -52,21 +56,19 @@ const updateEthPrice = async () => {
 const init = async () => {
   const networkId = await web3.eth.net.getId();
 
-  /*
+  console.log('network id is ' + networkId)
   // Create a contract's pointer to the Flashloan smart contract
   // The Flashloan.sol contract must be deployed in the network, otherwise, the script execution will fail
-  const flashloan = new web3.eth.Contract(
+  /*const flashloan = new web3.eth.Contract(
     Flashloan.abi,
     Flashloan.networks[networkId].address
-  )
-  */
+  )*/
 
   web3.eth.subscribe('newBlockHeaders')
     .on('data', async block => {
       console.log(`New block received. Block # ${block.number}`);
 
       let ethPrice = await updateEthPrice();
-      
       const AMOUNT_DAI_WEI = web3.utils.toBN(web3.utils.toWei(ethPrice.toString()));
       RECENT_ETH_PRICE_FROM_BINANCE = Math.round(await common.retrieveLatestEthPrice()); // Pull the latest eth price using the Binance API
 
@@ -141,12 +143,12 @@ const init = async () => {
         console.log(`Total number of trials: ${trialNo}, Kyber -> Uniswap initializing: ${oppFound}`)
 
         // Prepare/Define the transaction
-        const tx = flashloan.methods.initiateFlashloan(
+        /*const tx = flashloan.methods.initiateFlashloan(
           addresses.dydx.solo, 
           addresses.tokens.dai, 
           AMOUNT_DAI_WEI,
           DIRECTION.KYBER_TO_UNISWAP
-        );
+        );*/
 
         // Estimating gasCost of the above transactions
         const [gasPrice, gasCost] = await Promise.all([
@@ -160,7 +162,7 @@ const init = async () => {
         // Expected profit for an arbitrage operation by buying in Kyber and selling in Uniswap
         const profit = daiFromUniswap.sub(AMOUNT_DAI_WEI).sub(txCost);
 
-        if(profit > 0) {
+        /*if(profit > 0) {
           console.log('Arb opportunity found Kyber -> Uniswap!');
           console.log(`Expected profit: ${web3.utils.fromWei(profit)} Dai`);
           const data = tx.encodeABI();
@@ -173,7 +175,7 @@ const init = async () => {
           };
           const receipt = await web3.eth.sendTransaction(txData);
           console.log(`Transaction hash: ${receipt.transactionHash}`);
-        }
+        }*/
       }
 
       // Uniswap -> Kyber
@@ -181,12 +183,12 @@ const init = async () => {
         oppFound += 1
         console.log(`Total number of trials: ${trialNo}, Uniswap -> Kyber initializing: ${oppFound}`)
         // Prepare/Define the transaction
-        const tx = flashloan.methods.initiateFlashloan(
+        /*const tx = flashloan.methods.initiateFlashloan(
           addresses.dydx.solo, 
           addresses.tokens.dai, 
           AMOUNT_DAI_WEI,
           DIRECTION.UNISWAP_TO_KYBER
-        );
+        );*/
         
         // Estimating gasCost of the above transactions
         const [gasPrice, gasCost] = await Promise.all([
@@ -200,7 +202,7 @@ const init = async () => {
         // Expected profit for an arbitrage operation by buying in Uniswap and selling in Kyber
         const profit = daiFromKyber.sub(AMOUNT_DAI_WEI).sub(txCost);
 
-        if(profit > 0) {
+        /*if(profit > 0) {
           console.log('Arb opportunity found Uniswap -> Kyber!');
           console.log(`Expected profit: ${web3.utils.fromWei(profit)} Dai`);
           const data = tx.encodeABI();
@@ -213,7 +215,7 @@ const init = async () => {
           };
           const receipt = await web3.eth.sendTransaction(txData);
           console.log(`Transaction hash: ${receipt.transactionHash}`);
-        }
+        }*/
       }
 
       // No opportunities found
@@ -229,4 +231,12 @@ const init = async () => {
       console.log(error);
     });
 }
-init();
+
+try {
+  init();
+} catch (error) {
+  process.exit()
+}
+
+
+

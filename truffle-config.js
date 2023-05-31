@@ -51,21 +51,10 @@ module.exports = {
       // Setup the provider using the HDWalletProvider 
       provider: () => new HDWalletProvider(
         process.env.PRIVATE_KEY,
-        process.env.INFURA_API_URL_HTTPS
+        process.env.INFURA_API_URL_WSS
       ),
       network_id: 1,       //mainnet 
     },
-
-    /*goerli: {
-      // Setup the provider using the HDWalletProvider 
-      provider: () => new HDWalletProvider(
-        process.env.PRIVATE_KEY,
-        process.env.INFURA_API_URL_HTTPS
-      ),
-      network_id: 5,       //goerli testnet 
-      gas: 8500000,           // Gas sent with each transaction (default: ~6700000)
-      gasPrice: 20000000000,  // 20 gwei (in wei) (default: 100 gwei)
-    },*/
 
     // Another network with more advanced options...
     // advanced: {

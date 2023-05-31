@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon run-arbitrage.js",
     "start": "node run-arbitrage.js"
   },
   "keywords": [],
@@ -12,7 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@studydefi/money-legos": "^2.3.3",
-    "@truffle/hdwallet-provider": "^1.0.35",
+    "@truffle/hdwallet-provider": "^2.1.1",
     "@uniswap/sdk": "^2.0.5",
     "axios": "^0.27.2",
     "dotenv": "^16.0.3",
