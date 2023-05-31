@@ -76,6 +76,7 @@ const init = async () => {
     Flashloan.networks[networkId].address
   )*/
 
+  console.log(`Starting`);
   web3.eth.subscribe('newBlockHeaders')
     .on('data', async block => {
       try {
