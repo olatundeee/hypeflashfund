@@ -3,6 +3,7 @@ const common = require('./utils.js')
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
+var cookieParser = require('cookie-parser');
 const app = express();
 
 const abis = require('./abis');
