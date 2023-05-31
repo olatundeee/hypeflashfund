@@ -228,7 +228,7 @@ const init = async () => {
 
         console.log("\n\n");
       } catch (error) {
-       console.log(error) 
+       console.log(error.message) 
       }
     })
     .on('error', error => {
