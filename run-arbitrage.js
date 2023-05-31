@@ -4,6 +4,7 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 var cookieParser = require('cookie-parser');
+const port = process.env.PORT || 3001;
 const app = express();
 
 const abis = require('./abis');
