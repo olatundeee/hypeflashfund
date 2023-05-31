@@ -1,9 +1,19 @@
 require('dotenv').config()
 const common = require('./utils.js')
+const express = require("express");
+const logger = require("morgan");
+const cors = require("cors");
+const app = express();
 
 const abis = require('./abis');
 const { mainnet: addresses } = require('./addressess');
 //const Flashloan = require("./contracts/builds/Flashloan.json");
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(cors())
 
 const { ChainId, Token, TokenAmount, Pair } = require('@uniswap/sdk');
 
@@ -242,5 +252,5 @@ try {
   process.exit()
 }
 
-
+app.listen(port, () => console.log(`App listening on port ${port}!`));
 
