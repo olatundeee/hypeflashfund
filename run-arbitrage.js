@@ -3,7 +3,7 @@ const common = require('./utils.js')
 
 const abis = require('./abis');
 const { mainnet: addresses } = require('./addressess');
-const Flashloan = require("./contracts/builds/Flashloan.json");
+//const Flashloan = require("./contracts/builds/Flashloan.json");
 
 const { ChainId, Token, TokenAmount, Pair } = require('@uniswap/sdk');
 
